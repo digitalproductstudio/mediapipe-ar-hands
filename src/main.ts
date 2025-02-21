@@ -205,6 +205,8 @@ async function map3DModel(landmarks, model) {
   model.setRotation(0, 0, angle);
 
   // Schaal op basis van de grootte van de totale hand
-  // const scale = Math.sqrt(dx * dx + dy * dy) * 4;
+  const scale = Math.sqrt(dx * dx + dy * dy) * 0.1;
+  model.setScale(scale, scale, scale);
+
   // AR.setModelGroupScale(scale, scale, scale);
 }
