@@ -1,8 +1,13 @@
 {
-  "name": "my-mediapipe-app",
+  "name": "ar-on-hands",
+  "description": "Show 3D models on hands using MediaPipe Hands and Three.js",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "name": "Frederick Roegiers",
+    "email": "frederick@rogerthat.be"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

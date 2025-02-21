@@ -52,6 +52,15 @@ async function init() {
       new THREE.Vector3(0, Math.PI / 2, 0), // Rotation
       "Left"
     );
+
+    let beerModel2 = new Model(
+      "beer_bottle/scene.gltf",
+      new THREE.Vector3(0.02, 0.02, 0.02), // Scale
+      new THREE.Vector3(0, 0, 0), // Position
+      new THREE.Vector3(0, Math.PI / 2, 0), // Rotation
+      "Right"
+    );
+
     let chicken = new Model(
       "birbs/scene.gltf",
       new THREE.Vector3(0.005, 0.005, 0.005), // Scale
@@ -61,7 +70,7 @@ async function init() {
     );
 
     SCENE.add3DModel(beerModel);
-    SCENE.add3DModel(chicken);
+    SCENE.add3DModel(beerModel2);
 
     predictWebcam();
   } catch (e) {
