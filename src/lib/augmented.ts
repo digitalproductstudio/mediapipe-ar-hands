@@ -49,7 +49,6 @@ class AugmentedReality {
 
     public setModelGroupPosition(x: number, y: number, z: number) {
         this.modelGroup.position.set(x, y, z);
-        console.log(this.modelGroup.position);
     }
 
     // set rotation of the model
