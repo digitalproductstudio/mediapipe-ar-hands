@@ -52,16 +52,16 @@ async function init() {
       new THREE.Vector3(0, Math.PI / 2, 0), // Rotation
       "Left"
     );
-    let beerModel2 = new Model(
-      "beer_bottle/scene.gltf",
-      new THREE.Vector3(0.02, 0.02, 0.02), // Scale
+    let chicken = new Model(
+      "birbs/scene.gltf",
+      new THREE.Vector3(0.005, 0.005, 0.005), // Scale
       new THREE.Vector3(0, 0, 0), // Position
       new THREE.Vector3(0, Math.PI / 2, 0), // Rotation
       "Right"
     );
 
     SCENE.add3DModel(beerModel);
-    SCENE.add3DModel(beerModel2);
+    SCENE.add3DModel(chicken);
 
     predictWebcam();
   } catch (e) {
@@ -174,9 +174,17 @@ async function map3DModel(landmarks, model) {
   const palmBase = landmarks[0]; // MCP of the wrist
 
   // Scale hand position to Three.js coordinates
-  const mX = (palmBase.x - 0.5) * 2;
-  const mY = -(palmBase.y - 0.5) * 2;
-  const mZ = -palmBase.z * 2; // Adjust depth
+  let mX = (palmBase.x - 0.5) * 2;
+  let mY = -(palmBase.y - 0.5) * 2;
+  let mZ = -palmBase.z * 2; // Adjust depth
+
+  // // original position
+  // const modelOriPos = model.getModel()?.position;
+  // if (modelOriPos) {
+  //   mX += modelOriPos.x;
+  //   mY += modelOriPos.y;
+  //   mZ += modelOriPos.z;
+  // }
 
   model.setPosition(mX, mY, mZ);
 
