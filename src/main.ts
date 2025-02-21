@@ -6,29 +6,44 @@ import {
   GestureRecognizer,
   GestureRecognizerResult,
 } from "@mediapipe/tasks-vision";
-import * as THREE from "three";
 import { hasGetUserMedia } from "./lib/utils";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { displayGestureResults, displayLandmarks } from "./lib/display";
 import AugmentedReality from "./lib/augmented";
 
 declare type RunningMode = "IMAGE" | "VIDEO";
 let runningMode: RunningMode = "VIDEO";
 let gestureRecognizer: GestureRecognizer | undefined;
-let enableWebcamButton: HTMLButtonElement;
 let webcamRunning: boolean = false;
 let lastVideoTime = -1;
 let results: GestureRecognizerResult | undefined = undefined;
+let AR: AugmentedReality;
 
-const demosSection = document.getElementById("demos");
 const video = document.getElementById("webcam") as HTMLVideoElement;
 const canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
 const canvasCtx = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 const gestureOutput = document.getElementById("gesture_output") as HTMLDivElement;
+const enableWebcamButton = document.getElementById("webcamButton") as HTMLButtonElement;
+const ARLayers = document.querySelector("#ar-layers") as HTMLElement;
 
-const AR = new AugmentedReality();
 
-const createGestureRecognizer = async () => {
+
+const init = async () => {
+  try {
+    await hasGetUserMedia();
+    await createGestureRecognizer();
+    await enableCam();
+
+    AR = new AugmentedReality();
+    AR.add3DModel(video.videoWidth, video.videoHeight, ARLayers);
+    predictWebcam()
+  } catch (e) {
+    console.error(e);
+  }
+} 
+
+init();
+
+async function createGestureRecognizer() {
   const vision = await FilesetResolver.forVisionTasks(
     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
   );
@@ -41,20 +56,9 @@ const createGestureRecognizer = async () => {
     runningMode: runningMode,
     numHands: 2,
   });
-  demosSection?.classList.remove("invisible");
-  enableCam();
 };
-createGestureRecognizer();
 
-
-if (hasGetUserMedia()) {
-  enableWebcamButton = document.getElementById("webcamButton") as HTMLButtonElement;
-  enableWebcamButton.addEventListener("click", enableCam);
-} else {
-  console.warn("getUserMedia() is not supported by your browser");
-}
-
-function enableCam() {
+async function enableCam() {
   webcamRunning = !webcamRunning;
   enableWebcamButton.innerText = webcamRunning ? "DISABLE PREDICTIONS" : "ENABLE PREDICTIONS";
 
@@ -66,22 +70,24 @@ function enableCam() {
       frameRate: { ideal: 30, max: 60 },
     };
 
-    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (video) {
-        video.srcObject = stream;
+      video.srcObject = stream;
+      await new Promise<void>((resolve) => {
         video.addEventListener("loadeddata", () => {
-          // Set canvas dimensions to match video resolution
-          canvasElement.width = video.videoWidth;
-          canvasElement.height = video.videoHeight
-          // set w a h on window width;
-          // canvasElement.width = window.innerWidth;
-          // canvasElement.height = window.innerHeight;
-
-          AR.add3DModel(video.videoWidth, video.videoHeight, document.querySelector("#ar-layers") as HTMLElement);
-          predictWebcam()
+        // Set canvas dimensions to match video resolution
+        canvasElement.width = video.videoWidth;
+        canvasElement.height = video.videoHeight;
+        resolve();
         });
+      });
       }
-    });
+    } catch (error) {
+      console.error("Error accessing webcam: ", error);
+    }
+  } else {
+    video.srcObject = null;
   }
 }
 
