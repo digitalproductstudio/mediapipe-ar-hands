@@ -8,7 +8,9 @@ import {
 } from "@mediapipe/tasks-vision";
 import { hasGetUserMedia } from "./lib/utils";
 import { displayGestureResults, displayLandmarks } from "./lib/display";
-import AugmentedReality from "./lib/augmented";
+import { Scene } from "./AR/Scene";
+import { Model } from "./AR/Model";
+import * as THREE from "three";
 
 declare type RunningMode = "IMAGE" | "VIDEO";
 let runningMode: RunningMode = "VIDEO";
@@ -16,7 +18,8 @@ let gestureRecognizer: GestureRecognizer | undefined;
 let webcamRunning: boolean = false;
 let lastVideoTime = -1;
 let results: GestureRecognizerResult | undefined = undefined;
-let AR: AugmentedReality;
+
+let SCENE : Scene;
 
 const video = document.getElementById("webcam") as HTMLVideoElement;
 const canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
@@ -34,8 +37,16 @@ async function init () {
     await createGestureRecognizer();
     await enableCam();
 
-    AR = new AugmentedReality();
-    AR.add3DModel(video.videoWidth, video.videoHeight, ARLayers);
+    SCENE = new Scene(video.videoWidth, video.videoHeight, ARLayers);
+    let beerModel = new Model("beer_bottle/scene.gltf",
+      new THREE.Vector3(0.02, 0.02, 0.02),  // Scale
+      new THREE.Vector3(0, 0, 0),         // Position
+      new THREE.Vector3(0, Math.PI / 2, 0) // Rotation
+    );
+    SCENE.add3DModel(beerModel);
+    console.log(beerModel);
+    
+
     predictWebcam()
   } catch (e) {
     console.error(e);
@@ -121,7 +132,8 @@ async function predictWebcam() {
       const mY = -(palmBase.y - 0.5) * 2;
       const mZ = -palmBase.z * 2; // Diepte aanpassen
 
-      AR.setModelGroupPosition(mX, mY, mZ);
+      // AR.setModelGroupPosition(mX, mY, mZ);
+      SCENE.models[0].setPosition(mX, mY, mZ);
 
       const indexFinger = landmarks[8]; // MCP van de wijsvinger
       const thumb = landmarks[4]; // MCP van de duim
@@ -137,7 +149,8 @@ async function predictWebcam() {
       // Mogelijk spiegeling nodig, afhankelijk van coördinaatsysteem
       const angle = - Math.atan2(dy, dx) - Math.PI / 2;
 
-      AR.setModelGroupRotation(0, 0, angle);
+      // AR.setModelGroupRotation(0, 0, angle);
+      SCENE.models[0].setRotation(0, 0, angle);
 
       // Schaal op basis van de grootte van de totale hand
       // const scale = Math.sqrt(dx * dx + dy * dy) * 4;
@@ -149,6 +162,7 @@ async function predictWebcam() {
 
   if (webcamRunning) {
     window.requestAnimationFrame(predictWebcam);
-    AR.render3DModel();
+    // AR.render3DModel();
+    SCENE.render();
   }
 }
