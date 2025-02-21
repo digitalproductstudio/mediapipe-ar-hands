@@ -25,9 +25,10 @@ const gestureOutput = document.getElementById("gesture_output") as HTMLDivElemen
 const enableWebcamButton = document.getElementById("webcamButton") as HTMLButtonElement;
 const ARLayers = document.querySelector("#ar-layers") as HTMLElement;
 
+// go yeah
+init();
 
-
-const init = async () => {
+async function init () {
   try {
     await hasGetUserMedia();
     await createGestureRecognizer();
@@ -40,8 +41,6 @@ const init = async () => {
     console.error(e);
   }
 } 
-
-init();
 
 async function createGestureRecognizer() {
   const vision = await FilesetResolver.forVisionTasks(
