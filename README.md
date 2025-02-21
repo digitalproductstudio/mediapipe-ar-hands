@@ -40,10 +40,32 @@ This project demonstrates the use of augmented reality (AR) on hand tracking usi
 
 ## Code Overview
 
-- `main.ts`: The main TypeScript file that initializes the hand tracking and 3D rendering.
-- `utils.ts`: Utility functions used in the project.
-- `main.css`: Styling for the project.
+### Main Components
 
+#### `main.ts`
+This is the entry point of the application. It initializes the webcam, sets up the gesture recognizer, and manages the main loop for rendering the 3D models based on hand tracking data.
+
+#### `Scene.ts`
+This file defines the `Scene` class, which sets up the Three.js scene, including the camera, renderer, and lighting. It also manages the addition and rendering of 3D models.
+
+#### `Model.ts`
+This file defines the `Model` class, which handles loading and manipulating 3D models using Three.js. It includes methods for setting the position, rotation, and scale of the models, as well as showing and hiding them.
+
+#### `utils.ts`
+This file contains utility functions, such as `hasGetUserMedia`, which checks if the browser supports accessing the webcam.
+
+### File Structure
+
+```
+/src
+    ├── AR
+    │   ├── Model.ts
+    │   └── Scene.ts
+    ├── lib
+    │   └── utils.ts
+    ├── main.ts
+    └── main.css
+```
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
