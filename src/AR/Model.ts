@@ -9,7 +9,8 @@ export class Model {
         private modelPath: string,
         private scale: THREE.Vector3,
         private position: THREE.Vector3 = new THREE.Vector3(0, 0, 0),
-        private rotation: THREE.Vector3 = new THREE.Vector3(0, 0, 0)
+        private rotation: THREE.Vector3 = new THREE.Vector3(0, 0, 0),
+        private hand : string = "Right"
     ) {
         this.loader = new GLTFLoader();
     }
@@ -38,5 +39,17 @@ export class Model {
 
     public getModel(): THREE.Object3D | null {
         return this.model;
+    }
+
+    public showModel() {
+        if (this.model) this.model.visible = true;
+    }
+
+    public hideModel() {
+        if (this.model) this.model.visible = false;
+    }
+
+    public getHand() {
+        return this.hand;
     }
 }

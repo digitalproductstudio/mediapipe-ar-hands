@@ -25,7 +25,7 @@ export class Scene {
 
 
         // Set camera position
-        this.camera.position.z = 2;
+        this.camera.position.z = 1;
     }
 
     public add3DModel(model: Model) {
